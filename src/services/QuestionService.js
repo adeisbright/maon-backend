@@ -2,12 +2,23 @@ class QuestionService {
     constructor(model) {
         this.Model = model;
     }
+    /**
+     * @description adds a question to the database
+     * @param {Objet} question the data object the user asked
+     * @returns the created question document
+     *
+     */
     async addQuestion(question) {
-        return await this.Model.create(question);
+        try {
+            return await this.Model.create(question);
+        } catch (error) {
+            return error;
+        }
     }
-    async getQuestions() {}
+    async getQuestions() {
+        return await this.Model.find({});
+    }
     async getQuestion() {}
-    async deleteQuestion() {}
 }
 
 module.exports = QuestionService;

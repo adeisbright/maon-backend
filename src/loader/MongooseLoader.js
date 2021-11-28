@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const uri = process.env.LocalDB;
+const uri = process.env.LOCALDB_URI;
 
 const options = {
     useNewUrlParser: true,

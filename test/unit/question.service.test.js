@@ -1,24 +1,37 @@
 const chai = require("chai");
 const sinon = require("sinon");
+const faker = require("faker");
+const { QuestionService } = require("../../src/services");
+const { Question } = require("../../src/models");
+const questionService = new QuestionService(Question);
+
 const should = chai.should();
 const expect = chai.expect;
-const QuestionService = require("../../src/services/QuestionService");
-const Question = require("../../src/models/question");
 
 describe("Question Service", () => {
-    describe("Add Question", () => {
-        it("A question should not be added when the username is not in the payload", async () => {
+    describe("Create Question", () => {
+        let stub = sinon.stub();
+        after("Restore the object properties", () => {
+            stub.restore();
+        });
+
+        it("Should be able to create question", async function () {
             let questionData = {
-                title: "Example Question",
-                content:
-                    "I am asking my example question to find out something",
+                title: faker.lorem.sentence(),
+                content: faker.lorem.paragraphs(),
+                author: {
+                    name: faker.name.findName(),
+                    email: faker.internet.email(),
+                },
             };
 
-            let question = await new QuestionService(Question).addQuestion(
-                questionData
-            );
+            // Stub the Question model for use by the service
+            stub = sinon.stub(Question, "create").returns(questionData);
 
-            expect(queston).to.not.have.property("title");
+            let query = await questionService.addQuestion(stub);
+
+            query.should.have.property("title");
+            query.should.have.property("content").equal(questionData.content);
         });
     });
 });

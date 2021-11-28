@@ -1,17 +1,50 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const QuestionSchema = new mongoose.Schema(
+const QuestionSchema = new Schema(
     {
-        title: String,
+        title: {
+            type: String,
+            required: true,
+            minLength: 5,
+        },
         content: String,
         author: {
-            userName: String,
+            name: {
+                type: String,
+                required: true,
+            },
+            email: {
+                type: String,
+                required: true,
+            },
         },
-        responses: [
+        status: {
+            value: {
+                type: String,
+                enum: ["x", "o", "d"],
+                default: "o",
+            },
+            content: {
+                type: String,
+                default: "The question is open",
+            },
+        },
+        comments: [
             {
                 name: String,
                 content: String,
                 time: Date,
+                createdAt: Date,
+                votes: {
+                    up: Number,
+                    down: Number,
+                },
+                parentComment: {
+                    type: Schema.Types.ObjectId,
+                    ref: "comments",
+                },
+                _id: false,
             },
         ],
     },
@@ -20,4 +53,5 @@ const QuestionSchema = new mongoose.Schema(
 
 QuestionSchema.index({ title: 1, content: 1, createdAt: 1 });
 
-module.exports = mongoose.model("questions", QuestionSchema);
+const Question = mongoose.model("questions", QuestionSchema);
+module.exports = Question;
