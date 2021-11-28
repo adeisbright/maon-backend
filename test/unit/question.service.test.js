@@ -1,7 +1,7 @@
 const chai = require("chai");
 const sinon = require("sinon");
 const should = chai.should();
-
+const expect = chai.expect;
 const QuestionService = require("../../src/services/QuestionService");
 const Question = require("../../src/models/question");
 
@@ -18,7 +18,7 @@ describe("Question Service", () => {
                 questionData
             );
 
-            question.should.have.message("Error");
+            expect(queston).to.not.have.property("title");
         });
     });
 });

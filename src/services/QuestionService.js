@@ -1,19 +1,13 @@
 class QuestionService {
-    constructor(){
-        
+    constructor(model) {
+        this.Model = model;
     }
-    async addQuestion(){
-
+    async addQuestion(question) {
+        return await this.Model.create(question);
     }
-    async getQuestions(){
-
-    }
-    async getQuestion(){
-
-    }
-    async deleteQuestion(){
-
-    }
+    async getQuestions() {}
+    async getQuestion() {}
+    async deleteQuestion() {}
 }
 
-module.exports = QuestionService
+module.exports = QuestionService;
