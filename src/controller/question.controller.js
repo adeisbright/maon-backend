@@ -1,24 +1,54 @@
-const { QuestionService } = require("../services");
+const {
+    ApplicationError,
+    BadRequestError,
+    DbError,
+    NotFoundError,
+} = require("../middleware");
+const { parseQuery } = require("../lib");
+const { QuestionService } = require("../services/index");
 const { Question } = require("../models");
-
 const questionService = new QuestionService(Question);
 
 class QuestionController {
-    async addQuestion(req, res) {
+    async addQuestion(req, res, next) {
         try {
-            let question = await questionService.addQuestion(req.body);
-            res.status(200).json(question);
+            let result = await questionService.addQuestion(req.body);
+            res.status(200).json(result);
         } catch (error) {
-            res.status(500).json({ error });
+            return next(new ApplicationError(error));
         }
     }
 
-    async getQuestions(req, res) {
+    async getQuestion(req, res, next) {
         try {
-            let questions = await questionService.getQuestions();
-            res.status(200).json(questions);
+            const { id } = req.params;
+            let question = await questionService.getQuestion(id);
+            if (!question) {
+                return next(
+                    new NotFoundError("No question exist with this id")
+                );
+            }
+            res.status(200).json({ data: question });
         } catch (error) {
-            res.status(500).json({ error });
+            return next(new ApplicationError(error));
+        }
+    }
+
+    async search(req, res, next) {
+        try {
+            const { query, filters, skip, limit } = parseQuery(req.query);
+            let results = [];
+            if (query) {
+                results = await questionService.searchQuestion(
+                    query,
+                    filters,
+                    skip,
+                    limit
+                );
+            }
+            res.status(200).json(results);
+        } catch (error) {
+            return next(new ApplicationError(error));
         }
     }
 }

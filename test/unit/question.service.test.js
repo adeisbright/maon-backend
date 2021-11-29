@@ -6,7 +6,6 @@ const { Question } = require("../../src/models");
 const questionService = new QuestionService(Question);
 
 const should = chai.should();
-const expect = chai.expect;
 
 describe("Question Service", () => {
     describe("Create Question", () => {
@@ -25,7 +24,6 @@ describe("Question Service", () => {
                 },
             };
 
-            // Stub the Question model for use by the service
             stub = sinon.stub(Question, "create").returns(questionData);
 
             let query = await questionService.addQuestion(stub);

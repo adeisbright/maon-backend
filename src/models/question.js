@@ -51,7 +51,7 @@ const QuestionSchema = new Schema(
     { timestamps: true }
 );
 
-QuestionSchema.index({ title: 1, content: 1, createdAt: 1 });
+QuestionSchema.index({ "$**": "text" }, { weights: { title: 1 } });
 
 const Question = mongoose.model("questions", QuestionSchema);
 module.exports = Question;
