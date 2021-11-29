@@ -7,6 +7,7 @@ const {
     ForbiddenError,
     errorParser,
 } = require("./ErrorHandler");
+const Validator = require("./Validator");
 module.exports = {
     ApplicationError,
     BadRequestError,
@@ -15,4 +16,5 @@ module.exports = {
     DbError,
     ForbiddenError,
     errorParser,
+    Validator,
 };

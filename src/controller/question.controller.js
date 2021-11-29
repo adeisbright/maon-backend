@@ -1,5 +1,6 @@
 const { QuestionService } = require("../services");
 const { Question } = require("../models");
+
 const questionService = new QuestionService(Question);
 
 class QuestionController {
