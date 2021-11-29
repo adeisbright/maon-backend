@@ -6,7 +6,8 @@
   "scripts": {
     "testunit": "mocha ./test/unit --timeout 10000",
     "devstart": "nodemon ./bin/www",
-    "start": "node ./bin/www"
+    "start": "node ./bin/www" , 
+    "coverage" : "nyc npm run testunit"
   },
   "keywords": [
     "Maontech backend challenge",
