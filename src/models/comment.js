@@ -24,4 +24,5 @@ const CommentSchema = new Schema({
 
 CommentSchema.index({ content: 1, createdAt: 1 });
 
-module.exports = mongoose.model("comments", CommentSchema);
+const Comment = mongoose.model("comments", CommentSchema);
+module.exports = Comment;

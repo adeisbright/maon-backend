@@ -10,7 +10,7 @@ const should = chai.should();
 describe("Question Service", () => {
     describe("Create Question", () => {
         let stub = sinon.stub();
-        after("Restore the object properties", () => {
+        afterEach("Restore the object properties", () => {
             stub.restore();
         });
 

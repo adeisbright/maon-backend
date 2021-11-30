@@ -27,6 +27,10 @@ class QuestionService {
 
     async searchQuestion(text, filter = {}, skip = 0, limit = 10) {
         try {
+            await this.Model.collection.createIndex(
+                { "$**": "text" },
+                { weights: { title: 1 } }
+            );
             let results = await this.Model.find({ $text: { $search: text } })
                 .skip(skip)
                 .limit(limit)
@@ -36,6 +40,22 @@ class QuestionService {
         } catch (error) {
             return error;
         }
+    }
+
+    async addComment(questionId, field, commentDetail) {
+        let doc = await this.Model.findByIdAndUpdate(
+            questionId,
+            {
+                $push: {
+                    [field]: commentDetail,
+                },
+            },
+            {
+                useFindAndModify: false,
+                new: true,
+            }
+        );
+        return doc;
     }
 }
 

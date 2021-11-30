@@ -32,9 +32,11 @@ const QuestionSchema = new Schema(
         },
         comments: [
             {
-                name: String,
+                author: {
+                    name: String,
+                    email: String,
+                },
                 content: String,
-                time: Date,
                 createdAt: Date,
                 votes: {
                     up: Number,
