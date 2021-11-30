@@ -14,7 +14,7 @@ describe("Question Service", () => {
             stub.restore();
         });
 
-        it("Should be able to create question", async function () {
+        it("Should be able to create question", async () => {
             let questionData = {
                 title: faker.lorem.sentence(),
                 content: faker.lorem.paragraphs(),
@@ -26,10 +26,14 @@ describe("Question Service", () => {
 
             stub = sinon.stub(Question, "create").returns(questionData);
 
-            let query = await questionService.addQuestion(stub);
+            let { status, statusCode } = await questionService.addQuestion(
+                stub
+            );
 
-            query.should.have.property("title");
-            query.should.have.property("content").equal(questionData.content);
+            status.should.be.a("string");
+            status.should.equal("ok");
+            statusCode.should.not.be.null;
+            statusCode.should.be.equal(200);
         });
     });
 });

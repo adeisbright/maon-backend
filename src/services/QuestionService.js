@@ -14,8 +14,7 @@ class QuestionService {
             await this.Model.create(question);
             return {
                 status: "ok",
-                code: 200,
-                data: question,
+                statusCode: 200,
             };
         } catch (error) {
             return error;

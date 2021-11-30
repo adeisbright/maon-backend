@@ -8,7 +8,9 @@ const should = chai.should();
 describe("Question Controller", () => {
     describe("Add Question", () => {
         let res, next, status, json, questionService;
-
+        // The problem with this controller is because it is tightly coupled with the service
+        // So, the service cannot be reproduced outside the place where our controller is declared
+        // That is a bad design
         beforeEach(async () => {
             status = sinon.stub();
             (next = sinon.stub()), (json = sinon.spy());
