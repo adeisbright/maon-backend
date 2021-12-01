@@ -5,10 +5,16 @@ const {
     NotFoundError,
 } = require("../middleware");
 const { parseQuery } = require("../lib");
-const { QuestionService, CommentService } = require("../services/index");
+const {
+    QuestionService,
+    CommentService,
+    CachingService,
+} = require("../services/index");
 const { Question, Comment } = require("../models");
+const RedisClient = require("../loader/RedisLoader");
 const questionService = new QuestionService(Question);
 const commentService = new CommentService(Comment);
+const cachingService = new CachingService(RedisClient);
 const COMMENT_BOUND_SIZE = 10;
 
 class QuestionController {
@@ -48,6 +54,9 @@ class QuestionController {
                     limit
                 );
             }
+            await cachingService.cacheContent("name", "Adeleke");
+            let name = await cachingService.retrieveContent("name");
+            console.log(name);
             res.status(200).json(results);
         } catch (error) {
             return next(new ApplicationError(error));
