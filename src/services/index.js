@@ -3,7 +3,7 @@ const CommentService = require("./CommentService");
 const CachingService = require("./CachingService");
 
 module.exports = {
-    QuestionService,
-    CommentService,
-    CachingService,
+  QuestionService,
+  CommentService,
+  CachingService,
 };

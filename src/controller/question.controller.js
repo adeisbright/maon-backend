@@ -1,9 +1,4 @@
-const {
-    ApplicationError,
-    BadRequestError,
-    DbError,
-    NotFoundError,
-} = require("../middleware");
+const { ApplicationError, NotFoundError } = require("../middleware");
 const { parseQuery } = require("../lib");
 const {
     QuestionService,
@@ -17,20 +12,40 @@ const commentService = new CommentService(Comment);
 const cachingService = new CachingService(RedisClient);
 const COMMENT_BOUND_SIZE = 10;
 
+/**
+ *
+ */
 class QuestionController {
+    /**
+     * @description addQuestion handles request to add a question asked
+     * by a client
+     * @param {Objet} req HTTP req object
+     * @param {Object} res HTTP res object
+     * @param {Function} next This function will invoke the next middleware
+     * if an error occurs
+     * @return {Object} data indicating successful object creation
+     */
     async addQuestion(req, res, next) {
         try {
-            let result = await questionService.addQuestion(req.body);
+            const result = await questionService.addQuestion(req.body);
             res.status(200).json(result);
         } catch (error) {
             return next(new ApplicationError(error));
         }
     }
 
+    /**
+     * @description retrieves a particular question with the given id
+     * in the request params
+     * @param {Objet} req HTTP req object
+     * @param {Object} res HTTP res object
+     * @param {Function} next This function will invoke the next middleware
+     * @returns
+     */
     async getQuestion(req, res, next) {
         try {
             const { id } = req.params;
-            let question = await questionService.getQuestion(id);
+            const question = await questionService.getQuestion(id);
             if (!question) {
                 return next(
                     new NotFoundError("No question exist with this id")
@@ -41,7 +56,13 @@ class QuestionController {
             return next(new ApplicationError(error));
         }
     }
-
+    /**
+     * @description searches the database for question that matches the text
+     * in search query
+     * @param {Objet} req HTTP req object
+     * @param {Object} res HTTP res object
+     * @param {Function} next This function will invoke the next middleware
+     */
     async search(req, res, next) {
         try {
             const { query, filters, skip, limit } = parseQuery(req.query);
@@ -55,7 +76,7 @@ class QuestionController {
                 );
             }
             await cachingService.cacheContent("name", "Adeleke");
-            let name = await cachingService.retrieveContent("name");
+            const name = await cachingService.retrieveContent("name");
             console.log(name);
             res.status(200).json(results);
         } catch (error) {
@@ -63,10 +84,16 @@ class QuestionController {
         }
     }
 
+    /**
+     *@description adds a comment to a particular question thread
+     * @param {Objet} req HTTP req object
+     * @param {Object} res HTTP res object
+     * @param {Function} next This function will invoke the next middleware
+     */
     async addComment(req, res, next) {
         try {
-            let { id } = req.params;
-            let question = await questionService.getQuestion(id);
+            const { id } = req.params;
+            const question = await questionService.getQuestion(id);
 
             if (!question) {
                 return next(
@@ -74,7 +101,7 @@ class QuestionController {
                 );
             }
             req.body.createdAt = new Date();
-            let comment, questionDoc;
+            let questionDoc, comment;
 
             if (
                 question.comments &&

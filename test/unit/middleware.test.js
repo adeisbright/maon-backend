@@ -42,18 +42,18 @@ describe("Middleware", () => {
             res.should.have.property("message");
         });
     });
-    describe.skip("Error Handler", () => {
-        let status, json, req, res;
-        before("Create the request object", async () => {
-            req = sinon.stub();
-            status = sinon.stub();
-            json = sinon.spy();
-            res = { json, status };
-        });
+    // describe.skip("Error Handler", () => {
+    //   let status; let json; let req; let res;
+    //   before("Create the request object", async () => {
+    //     req = sinon.stub();
+    //     status = sinon.stub();
+    //     json = sinon.spy();
+    //     res = {json, status};
+    //   });
 
-        it("Should return the appropriate response and status code", async () => {
-            const req = sinob.stub().Throw();
-            let response = errorParser();
-        });
-    });
+    //   it("Should return the appropriate response and status code", async () => {
+    //     const req = sinob.stub().Throw();
+    //     const response = errorParser();
+    //   });
+    // });
 });

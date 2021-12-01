@@ -1,8 +1,8 @@
 const Joi = require("joi");
-const { ApplicationError, BadRequestError } = require("./ErrorHandler");
+const { BadRequestError } = require("./ErrorHandler");
 
 class Validator {
-    static async validateAddQuestion(req, res, next) {
+    static async validateAddContent(req, res, next) {
         try {
             const { title, content, author } = req.body;
 
@@ -33,12 +33,9 @@ class Validator {
                 content: content,
                 author: author,
             });
-            if (error) {
-                return next(new BadRequestError(error.message));
-            }
             next();
         } catch (error) {
-            return next(new ApplicationError(error));
+            return next(new BadRequestError(error.message));
         }
     }
     static async validateSearchParams(req, res, next) {
@@ -57,12 +54,9 @@ class Validator {
                 pageNo: page_no,
                 filter: filter,
             });
-            if (error) {
-                return next(new BadRequestError(error.message));
-            }
             next();
         } catch (error) {
-            return next(new ApplicationError(error));
+            return next(new BadRequestError(error.message));
         }
     }
 }

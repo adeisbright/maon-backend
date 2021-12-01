@@ -4,10 +4,16 @@
   "description": "A Stackoverflow clone with endpoints for creating questions , searching for response , etc",
   "main": "app.js",
   "scripts": {
-    "testunit": "mocha ./test/unit --timeout 10000",
+    "unittest": "mocha ./test/unit --timeout 10000",
+    "integrationtest": "mocha ./test/integration --timeout 10000",
+    "test" : "mocha ./test/unit && ./test/integration --timeout 10000",
     "devstart": "nodemon ./bin/www",
     "start": "node ./bin/www" , 
-    "coverage" : "nyc npm run testunit"
+    "unitcoverage" : "nyc npm run unittest",
+    "integrationcoverage" : "nyc npm run integrationtest",
+    "lint": "eslint .",
+    "lint-fix": "npm run lint -- --fix",
+    "pretest": "npm run lint"
   },
   "keywords": [
     "Maontech backend challenge",
