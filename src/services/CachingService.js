@@ -1,15 +1,25 @@
 class CachingService {
-  constructor(client) {
-    this.client = client;
-  }
+    constructor(client) {
+        this.client = client;
+    }
 
-  async cacheContent(key, content, ttl = 0) {
-    return this.client.set(key, content);
-  }
+    /**
+     *
+     * @param {String} hashKey key to identify
+     * @param {String} key key of saved hash document
+     * @param {String} value value of document been hashed
+     * @param {Number} ttl duration before the document expires resulting in a cache miss
+     * @returns
+     */
+    async cacheQuestion(hashKey, content, ttl = 30000) {
+        this.client.set(hashKey, content);
+        this.client.expire(hashKey, ttl);
+        return this.client;
+    }
 
-  async retrieveContent(key) {
-    return this.client.getAsync(key);
-  }
+    async getQuestion(key) {
+        return this.client.getAsync(key);
+    }
 }
 
 module.exports = CachingService;

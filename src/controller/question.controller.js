@@ -6,10 +6,10 @@ const {
     CachingService,
 } = require("../services/index");
 const { Question, Comment } = require("../models");
-const RedisClient = require("../loader/RedisLoader");
+const redisClient = require("../loader/redis-loader");
 const questionService = new QuestionService(Question);
 const commentService = new CommentService(Comment);
-const cachingService = new CachingService(RedisClient);
+const cachingService = new CachingService(redisClient);
 const COMMENT_BOUND_SIZE = 10;
 
 /**
@@ -45,13 +45,24 @@ class QuestionController {
     async getQuestion(req, res, next) {
         try {
             const { id } = req.params;
-            const question = await questionService.getQuestion(id);
+
+            // Check the cache for the question
+            let question = JSON.parse(await cachingService.getQuestion(id));
+
             if (!question) {
-                return next(
-                    new NotFoundError("No question exist with this id")
+                question = await questionService.getQuestion(id);
+                if (!question) {
+                    return next(
+                        new NotFoundError("No question exist with this id")
+                    );
+                }
+                await cachingService.cacheQuestion(
+                    id,
+                    JSON.stringify(question)
                 );
             }
-            res.status(200).json({ data: question });
+
+            res.status(200).json(question);
         } catch (error) {
             return next(new ApplicationError(error));
         }
@@ -75,9 +86,6 @@ class QuestionController {
                     limit
                 );
             }
-            await cachingService.cacheContent("name", "Adeleke");
-            const name = await cachingService.retrieveContent("name");
-            console.log(name);
             res.status(200).json(results);
         } catch (error) {
             return next(new ApplicationError(error));
