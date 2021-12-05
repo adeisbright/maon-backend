@@ -1,8 +1,8 @@
-# Maontech-backend-challenge
+# Maon-backend
 
 This backend challenge is a clone that mimics stackoverflow.
 
-The clone covers only 4 basic endpoints to enable users ask questions. It focuses on only the question service.
+The clone covers only 4 basic endpoints to enable users ask questions. It focuses on only the question , comment , search , and single question retrieval service.
 
 ## Table of Contents
 
@@ -36,10 +36,8 @@ Maon Backend Challenge is built using Nodejs , Express , MongoDB , Redis , and t
 
     > An in-memory database primarily used for server side caching. It provides useful data structures
 
--   ELK Stack
-    > ELK is an acronym for ElasticSearch , LogStash , and Kibana. The services are offered by Elastic.
-    > The stack makes it possible to build web search engines that provides near-real time search capability ,
-    > monitoring , and security of data
+-   Elasticsearch
+    > For near real-time full-text search
 
 ## Project Dependencies
 
@@ -56,7 +54,6 @@ The dependencies of this project are listed in _[package.json]_. and they includ
 -   **mocha**
 -   **chai**
 -   **chai-http**
--   **morgan** for application logging
 
 ### Installation
 
@@ -79,9 +76,9 @@ Configure the project before you launch it by doing the following :
 
     LocalDB = "mongodb://127.0.0.1:27017"
 
-    dbName = "tictactoe"
+    dbName = "maon"
 
-    Server_Port = 8000
+    Server_Port = 4000
 
 Ensure you install Redis , and ElasticSearch on your device
 
@@ -90,6 +87,38 @@ Ensure you install Redis , and ElasticSearch on your device
 -   Run this command to launch the development server : npm run devstart
 -   Add a Question
 -   Search for a question
--   Remove a question
--   Add answers to a question
--   When testing set the Databse to the Test DB in App.js . Run : npm run test
+-   Retrieve a question
+-   Add comments to a question
+
+### API Documentation
+
+The API is documented using OpenAPI specification.
+
+Check the file [openapi.json](http://github.com/adeisbright/maon-backend/openapi.json)
+
+### Testing
+
+The testing is split into two:
+
+1. Unit Test : located in /test/unit
+
+This can be run from the command line using
+
+> `npm run unittest`
+
+1. Integration test
+    > `npm run integrationtest`
+
+To check for code coverage for any of the test above, Istabul was used.
+
+Run Istabul CLI :
+
+> `nyc npm run unittest`
+
+> `nyc npm run integrationtest`
+
+For Static Code Analysis , Eslint and Google Eslint Configuration was used.
+
+Lint the code by running this command:
+
+> `npm run lint-fix`
