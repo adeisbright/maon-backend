@@ -1,0 +1,372 @@
+{
+    "openapi" : "3.0.1" , 
+    "info":{
+        "version" : "0.0.1" , 
+        "title" : "Maon Backend" , 
+        "summary" : "Stackoverflow Clone" , 
+        "description" : "The Stackoverflow clone uses 4 endpoints to enable users ask questions , comment , and retrieve responses" ,
+        "termsOfService" : "https://github.com/adeisbright/maon-backend/readme.md" , 
+        "contact" : {
+            "name" : "Adeleke Bright" , 
+            "email" : "adenababanla@gmail.com" , 
+            "url" : "https://linkedin.com/in/adeleke-bright"
+        } , 
+        "license" : {
+            "name" : "Apache 2.0" , 
+            "url" : "https://apache.org/license/license-2.0.html"
+        }
+    } , 
+    "servers" : [
+            {
+                "url" : "http://localhost:{port}/v1/docs" , 
+                "description" : "Local Server" , 
+                "variables" : {
+                    "port":{
+                        "default" : 4000 , 
+                        "description" : "The port number you intend to run your server on"
+                    }
+                }
+            },
+            {
+                "url" : "https://example.com/v1/docs" , 
+                "description" : "Production Server"
+            }
+        ] , 
+    "components" : {
+        "schemas" : {
+            "name" : {
+                "type" : "string"  , 
+                "description" : "Name of the user" , 
+                "example" : "adebright"
+            } , 
+            "content" : {
+                "type" : "string"  , 
+                "description" : "The content of the question asked by a user or the comment made" , 
+                "example" : "Deploy API to Google Cloud using Serveless AppEngine involves ..."
+            } , 
+            "title" : {
+                "type" : "string"  , 
+                "description" : "Title for the task" , 
+                "example" : "Deploy API"
+            } , 
+            "email" : {
+                "type" : "string"  , 
+                "description" : "Email of the user" , 
+                "example" : "adenababanla@gmail.com"
+            } , 
+            "_id" : {
+                "type" : "string"  , 
+                "description" : "Id of a document" , 
+                "example" : "6188db3f8b9ad8afe1e8cd2a"
+            } ,
+            "message" : {
+                "type" : "string" , 
+                "description" : "A response message from the server" , 
+                "example" : "Your question was added successfully"
+            } ,
+            "createdAt" : {
+                "type" : "date" , 
+                "description" : "Date when the question was asked" , 
+                "example" : "2021-12-02T04:56:01.181Z"
+            } ,
+            "updatedAt" : {
+                "type" : "date" , 
+                "description" : "Date of last update to question" , 
+                "example" : "2021-12-05T04:56:01.181Z"
+            },
+            "statusCode" : {
+                "type" : "integer" , 
+                "format" : "int64" , 
+                "description" : "Status code after server completes request handling" , 
+                "example" : 200
+            } , 
+            "status" : {
+                "type" : "string" ,  
+                "description" : "A message indicating the outcome of the operation" , 
+                "example" : "ok"
+            } , 
+            "author" : {
+                "type" : "object" , 
+                "properties" : {
+                    "name" : {
+                        "$ref" : "#/components/schemas/name"
+                    } , 
+                    "email" : {
+                        "$ref" : "#/components/schemas/email"
+                    }
+                }
+            }
+        } , 
+        "responses":{
+            "400" : {
+                "description" : "A bad request from the user"  , 
+                "content" : {
+                    "application/json" : {
+                        "type" : "object" , 
+                        "properties" : {
+                            "message" : {
+                                "$ref" : "#/components/schemas/message"
+                            } 
+                        }
+                    }
+                }
+            } , 
+            "500" : {
+                "description" : "An error on the server"  , 
+                "content" : {
+                    "application/json" : {
+                        "type" : "object" , 
+                        "properties" : { 
+                            "message" : {
+                                "$ref" : "#/components/schemas/message"
+                            } 
+                        }
+                    }
+                }
+            }
+        }
+    } , 
+    "tags" : [{"name" : "Question Operation"}] , 
+    "paths" : {
+            "/v1/questions" : {
+                "tags" : ["Question Operation"] , 
+                "post" : {
+                    "requestBody" : {
+                        "required" : true , 
+                        "content" : {
+                            "application/json":{
+                                "content" : {
+                                    "schema" : {
+                                        "type" : "object" ,
+                                        "properties" : {
+                                            "title" : {
+                                                "$ref" : "#/components/schemas/title" 
+                                            } , 
+                                            "content" : {
+                                                "$ref" : "#/components/schemas/content" 
+                                            } , 
+                                            "author" : {
+                                                "$ref" : "#/components/schemas/author"
+                                            }
+                                        } , 
+                                        "required" : ["title" , "author" , "content"]
+                                    }
+                                }
+                            }
+                        }
+                    } , 
+                    "responses" : {
+                        "200" : {
+                            "description" : "A message indicating successful request"  , 
+                            "content" : {
+                                "application/json" : {
+                                    "type" : "object" , 
+                                    "properties" : {
+                                        "status" : {
+                                            "$ref" : "#/components/schemas/status"
+                                        } , 
+                                        "statusCode" : {
+                                            "$ref" : "#/components/schemas/statusCode"
+                                        } , 
+                                        "id" : {
+                                            "ref" : "#/components/schemas/_id"
+                                        }
+                                    }
+                                }
+                            }
+                        } , 
+                        "400" : {
+                            "description" : "A bad request from the user"  , 
+                            "content" : {
+                                "application/json" : {
+                                    "type" : "object" , 
+                                    "properties" : {
+                                        "message" : {
+                                            "$ref" : "#/components/schemas/message"
+                                        } 
+                                    }
+                                }
+                            }
+                        } , 
+                        "500" : {
+                            "description" : "An error on the server"  , 
+                            "content" : {
+                                "application/json" : {
+                                    "type" : "object" , 
+                                    "properties" : { 
+                                        "message" : {
+                                            "$ref" : "#/components/schemas/message"
+                                        } 
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } ,
+            "/v1/search" : {
+                "get" : {
+                    "parameters" : [
+                        {
+                            "name" : "page_no" , 
+                            "in" : "query" , 
+                            "required" : "true" , 
+                            "description" : "The particular page of the API to load" , 
+                            "schema" : {
+                                "type" : "integer" , 
+                                "default" : 0
+                            }
+                        } ,
+                        {
+                            "name" : "limit" , 
+                            "in" : "query" , 
+                            "required" : "true" , 
+                            "description" : "The number of question to skip" , 
+                            "schema" : {
+                                "type" : "integer" , 
+                                "default" : 10
+                            }
+                        } , 
+                        {
+                            "name" : "filter" , 
+                            "in" : "query" , 
+                            "required" : false , 
+                            "description" : "The attributes to return from each document" , 
+                            "schema" : {
+                                "type" : "string" 
+                            }
+                        } , 
+                        {
+                            "name" : "q" , 
+                            "in" : "query" , 
+                            "required" : true , 
+                            "description" : "The query text to search" , 
+                            "schema" : {
+                                "type" : "string" 
+                            }
+                        } 
+                        
+                    ], 
+                    "description" : "This is the query text entered by the user" ,
+                    "responses":{
+                        "200" :{
+                            "description" : "Returns all questions that matches the query" , 
+                            "content" : {
+                                "application/json":{
+                                    "type" : "array"
+                                }
+                            }
+                        } , 
+                        "400" : {
+                            "$ref" :"#/components/responses/400"
+                        },
+                        "500" : {
+                            "$ref" :"#/components/responses/500"
+                        }
+                    }
+                }
+            } , 
+            "/v1/questions/{id}" : {
+                "tags" : ["Gets a Question"] , 
+                "get": {
+                    "description" : "Returns a question whose _id is" , 
+                    "responses" : {
+                        "400":{
+                            "$ref":"#/components/responses/400"
+                        } , 
+                        "500" : {
+                            "$ref" : "#/components/responses/500"
+                        } , 
+                        "200":{
+                            "content":{
+                                "application/json":{
+                                    "type" : "object" , 
+                                    "properties" : {
+                                        "title" : {
+                                            "$ref" :"#/components/schemas/title"
+                                        } , 
+                                        "content" : {
+                                            "$ref" :"#/components/schemas/content"
+                                        } , 
+                                        "author" : {
+                                            "$ref" :"#/components/schemas/author"
+                                        } , 
+                                        "createdAt" : {
+                                            "$ref" :"#/components/schemas/createdAt"
+                                        } , 
+                                        "updatedAt" : {
+                                            "$ref" :"#/components/schemas/updatedAt"
+                                        } , 
+                                        "_id" : {
+                                            "$ref" :"#/components/schemas/_id"
+                                        } , 
+                                        "comments" : {
+                                            "type" : "array" , 
+                                            "items" : {
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } 
+                    
+                }
+            }  , 
+            
+            "/v1/questions/{id}/comments" : { 
+                "post" : {
+                    "description" : "Adds a comment to the question with id " , 
+                    "responses":{
+                        "200" :{
+                            "content" : {
+                                "application/json":{
+                                    "type" : "object" , 
+                                    "properties" : {
+                                        "status" : {
+                                            "$ref" :"#/components/schemas/status"
+                                        } , 
+                                        "statusCode" : {
+                                            "$ref" :"#/components/schemas/statusCode"
+                                        }
+                                    }
+                                }
+                            }
+                        } , 
+                        "400" : {
+                            "$ref" :"#/components/responses/400"
+                        },
+                        "500" : {
+                            "$ref" :"#/components/responses/500"
+                        }
+                    } , 
+                    "requestBody" : {
+                        "required" : true , 
+                        "content" : {
+                            "application/json":{
+                                "content" : {
+                                    "schema" : {
+                                        "type" : "object" ,
+                                        "properties" : {
+                                            "title" : {
+                                                "$ref" : "#/components/schemas/title" 
+                                            } , 
+                                            "content" : {
+                                                "$ref" : "#/components/schemas/content" 
+                                            } , 
+                                            "author" : {
+                                                "$ref" : "#/components/schemas/author"
+                                            }
+                                        } , 
+                                        "required" : ["title" , "author" , "content"]
+                                    }
+                                }
+                            }
+                        }
+                    } 
+                } 
+            }
+    } 
+    
+}
