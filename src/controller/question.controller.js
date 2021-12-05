@@ -4,12 +4,17 @@ const {
     QuestionService,
     CommentService,
     CachingService,
+    ElasticService,
 } = require("../services/index");
 const { Question, Comment } = require("../models");
 const redisClient = require("../loader/redis-loader");
+const elasticClient = require("../loader/elastic-loader");
+
 const questionService = new QuestionService(Question);
 const commentService = new CommentService(Comment);
 const cachingService = new CachingService(redisClient);
+const elasticService = new ElasticService(elasticClient);
+
 const COMMENT_BOUND_SIZE = 10;
 
 /**
@@ -28,6 +33,12 @@ class QuestionController {
     async addQuestion(req, res, next) {
         try {
             const result = await questionService.addQuestion(req.body);
+            await elasticService.index(
+                process.env.ELASTIC_INDEX,
+                "questions",
+                result.id,
+                req.body
+            );
             res.status(200).json(result);
         } catch (error) {
             return next(new ApplicationError(error));
@@ -79,12 +90,24 @@ class QuestionController {
             const { query, filters, skip, limit } = parseQuery(req.query);
             let results = [];
             if (query) {
-                results = await questionService.searchQuestion(
-                    query,
-                    filters,
-                    skip,
-                    limit
+                let getElasticResults = await elasticService.search(
+                    process.env.ELASTIC_INDEX,
+                    "questions",
+                    { title: query },
+                    limit,
+                    skip
                 );
+                if (getElasticResults.hits) {
+                    results = getElasticResults.hits.hits;
+                    console.log(getElasticResults.hits.hits);
+                } else {
+                    results = await questionService.searchQuestion(
+                        query,
+                        filters,
+                        skip,
+                        limit
+                    );
+                }
             }
             res.status(200).json(results);
         } catch (error) {
