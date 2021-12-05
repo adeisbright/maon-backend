@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Maon-backend
 
 This backend challenge is a clone that mimics stackoverflow.
@@ -122,3 +123,8 @@ For Static Code Analysis , Eslint and Google Eslint Configuration was used.
 Lint the code by running this command:
 
 > `npm run lint-fix`
+=======
+# maon-backend
+An implementation of Stackoverflow API using Express , MongoDB , Redis , and Elasticsearch.
+The implementation only uses 4 endpoints
+>>>>>>> 91e10a595b5eaeb888f7fbfc4c655ffe42fbdc47
