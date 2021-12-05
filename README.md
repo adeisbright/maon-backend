@@ -95,7 +95,7 @@ Ensure you install Redis , and ElasticSearch on your device
 
 The API is documented using OpenAPI specification.
 
-Check the file [openapi.json](http://github.com/adeisbright/maon-backend/openapi.json)
+Check the file [openapi.json](https://github.com/adeisbright/maon-backend/blob/main/openapi.json)
 
 ### Testing
 
