@@ -37,7 +37,7 @@ describe("Middleware", () => {
             const status = sinon.stub();
             const res = { json, status };
             await Validator.validateAddQuestion(req, res, next);
-            console.log(res);
+            
             expect(next.called).to.be.true;
             res.should.have.property("message");
         });

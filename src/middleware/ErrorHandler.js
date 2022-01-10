@@ -73,13 +73,13 @@ class ForbiddenError extends ApplicationError {
 
 const errorHandler = (err, req, res, next) => {
   if (err instanceof ApplicationError) {
-    res.status(err.statusCode).json({message: err.message});
+    res.status(err.statusCode).json({message: err.message}); 
   } else {
     res.status(500).json({message: err.message});
   }
 };
 
-module.exports = {
+module.exports = {  
   ApplicationError,
   BadRequestError,
   NotAuthorizeError,
