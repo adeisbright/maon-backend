@@ -4,7 +4,7 @@ const { promisify } = require("util");
 // Connecting to local cluster
 const client = redis.createClient({
     host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
+    port: "6378", //process.env.REDIS_PORT,
 });
 // Connecting to a remote redis cluster
 // const client = redis.createClient({

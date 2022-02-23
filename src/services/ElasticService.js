@@ -11,18 +11,32 @@ class SearchEngine {
         });
     }
 
-    async search(index, type, matchObj, size = 5, from = 0) {
+    async update(index, type, id, doc) {
         return await this.client.transport.request({
-            method: "POST",
-            path: `/${index}/${type}/_search?filter_path=_id`,
-            from: from,
-            size: size,
-            body: {
-                query: {
-                    match: matchObj,
+            method: "PUT",
+            path: `/${index}/${type}/${id}/_doc`,
+            body: doc,
+        });
+    }
+
+    async search(index, type, matchObj, size = 5, from = 0) {
+        return await this.client.transport.request(
+            {
+                method: "POST",
+                path: `/${index}/${type}/_search`,
+                from: 0,
+                size: 20,
+                body: {
+                    query: {
+                        match: matchObj,
+                    },
                 },
             },
-        });
+            {
+                requestTimeout: 10,
+                timeout: 10,
+            }
+        );
     }
 }
 

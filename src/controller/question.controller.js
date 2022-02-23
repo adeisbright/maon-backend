@@ -7,6 +7,9 @@ const {
     ElasticService,
     AnalyticsService,
 } = require("../services/index");
+const sendMessageToQueue = require("../services/queue");
+const messageExchange = require("../services/message-exchange");
+
 const faker = require("faker");
 const { Question, Comment } = require("../models");
 
@@ -37,12 +40,20 @@ class QuestionController {
     async addQuestion(req, res, next) {
         try {
             const result = await questionService.addQuestion(req.body);
-            await elasticService.index(
-                process.env.ELASTIC_INDEX,
-                "questions",
-                result.id,
-                req.body
-            );
+            const data = {
+                index: "moanapp",
+                type: "questions",
+                id: result.id,
+                body: req.body,
+            };
+            await messageExchange(data, "es", "fanout", "esKey");
+            // await elasticService.index(
+            //     process.env.ELASTIC_INDEX,
+            //     "questions",
+            //     result.id,
+            //     req.body
+            // );
+
             res.status(200).json(result);
         } catch (error) {
             return next(new ApplicationError(error));
@@ -62,22 +73,22 @@ class QuestionController {
             const { id } = req.params;
 
             // Check the cache for the question and also try to increment the visit
-            let [question, pageCount] = await Promise.all([
+            let [question] = await Promise.all([
                 JSON.parse(await cachingService.getQuestion(id)),
-                await AnalyticsService.incrVisit(req.url),
+                //await AnalyticsService.incrVisit(req.url),
             ]);
-            if (!question) {
-                question = await questionService.getQuestion(id);
-                if (!question) {
-                    return next(
-                        new NotFoundError("No question exist with this id")
-                    );
-                }
-                await cachingService.cacheQuestion(
-                    id,
-                    JSON.stringify(question)
-                );
-            }
+            // if (!question) {
+            //     question = await questionService.getQuestion(id);
+            //     if (!question) {
+            //         return next(
+            //             new NotFoundError("No question exist with this id")
+            //         );
+            //     }
+            //     await cachingService.cacheQuestion(
+            //         id,
+            //         JSON.stringify(question)
+            //     );
+            // }
             res.status(200).json(question);
         } catch (error) {
             return next(new ApplicationError(error));
@@ -93,26 +104,46 @@ class QuestionController {
     async search(req, res, next) {
         try {
             const { query, filters, skip, limit } = parseQuery(req.query);
+
             let results = [];
             if (query) {
                 const getElasticResults = await elasticService.search(
                     process.env.ELASTIC_INDEX,
                     "questions",
                     { title: query },
-                    limit,
-                    skip
+                    20,
+                    0
                 );
+
+                let search = await elasticClient.search({
+                    // method: "POST",
+                    // path: "/moanapp/questions/_validate/query?explain",
+                    index: "moanapp",
+                    type: "questions",
+                    body: {
+                        query: {
+                            match: {
+                                title: "black jeans",
+                            },
+                        },
+                        sort: { title: { order: "desc" } },
+                    },
+                });
+
+                console.log(search);
+
                 if (getElasticResults.hits) {
                     results = getElasticResults.hits.hits;
-                    console.log(getElasticResults.hits.hits);
-                } else {
-                    results = await questionService.searchQuestion(
-                        query,
-                        filters,
-                        skip,
-                        limit
-                    );
                 }
+                // else {
+                //     results = await questionService.searchQuestion(
+                //         query,
+                //         filters,
+                //         skip,
+                //         limit
+                //     );
+                // }
+                // If the data exists , we can then ingest it into Elasticsearch
             }
             res.status(200).json(results);
         } catch (error) {
@@ -408,6 +439,24 @@ class QuestionController {
     async getUsers(req, res, next) {
         try {
             const { rows } = await pgClient.query("SELECT * FROM authors");
+            const user = {
+                name: "Adeleke Bright",
+                age: 27,
+                career: "Software Engineer",
+            };
+            const appStatement = "We will do everything to survive";
+
+            let m = await sendMessageToQueue("how", user);
+            if (m.worked) {
+                console.log("Message don send");
+            }
+
+            // const eMessage = await exchangeMessage(
+            //     appStatement,
+            //     "test_exchange",
+            //     "direct",
+            //     "test.try"
+            // );
             res.status(200).json({
                 body: {
                     data: rows,
